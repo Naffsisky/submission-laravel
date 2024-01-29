@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,9 +25,18 @@ Route::get('/blog', [UserController::class, 'index']);
 Route::get('/about', [UserController::class, 'about']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    });
+
     Route::view('/dashboard', 'dashboard')->name('dashboard');
-    Route::view('/categories', 'admin.categories')->name('categories');
-    Route::view('/articles', 'admin.articles')->name('articles');
+    Route::view('/articles', 'admin.articles.index')->name('articles');
 });
 
 Route::middleware('auth')->group(function () {
