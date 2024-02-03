@@ -9,7 +9,22 @@ class Article extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['title', 'content', 'image', 'category_id'];
+
     public function category() {
         return $this->belongsTo(Category::class);
+    }
+    
+    public function tags() {
+        return $this->belongsToMany(Tag::class, 'article_tags');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($article) {
+            $article->tags()->detach();
+        });
     }
 }

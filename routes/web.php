@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
@@ -17,26 +18,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('user.about');
 });
 
-Route::get('/blog', [UserController::class, 'index']);
-
-Route::get('/about', [UserController::class, 'about']);
+Route::prefix('public')->group(function () {
+    Route::get('/blog', [UserController::class, 'index'])->name('blog');
+    Route::get('/about', [UserController::class, 'about'])->name('about');
+    Route::get('/blog/view/{id}', [UserController::class, 'view'])->name('view');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::prefix('categories')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
-        Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
-        Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
-        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-    });
-
     Route::view('/dashboard', 'dashboard')->name('dashboard');
-    Route::view('/articles', 'admin.articles.index')->name('articles');
+
+    Route::prefix('admin')->group(function () {
+        Route::resource('articles', ArticleController::class);
+        Route::resource('categories', CategoryController::class);
+        Route::get('/{id}/view', [ArticleController::class, 'articleView'])->name('articles.view');
+    });
 });
 
 Route::middleware('auth')->group(function () {

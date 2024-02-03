@@ -12,11 +12,25 @@
                 <form action="{{ route('categories.update', $category) }}" method="POST">
                     @csrf
                     @method('PUT')
-
-                    <input type="text" id="name" name="name" placeholder="Kategori" class="input input-bordered input-info w-full max-w-xs bg-white border-gray-300 text-black" value="{{ $category->name }}" />
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        placeholder="Kategori" 
+                        class="input input-bordered input-info w-full max-w-xs bg-white border-gray-300 text-black" 
+                        value="{{ $category->name }}" 
+                        required
+                    />
                 
                     <div class="py-3 text-center">
-                        <button type="submit" class="btn btn-primary btn-outline ml-auto">Edit</button>
+                        <a 
+                            href="{{ route('categories.index') }}" 
+                            class="btn btn-primary btn-outline ml-auto">Back
+                        </a>
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary btn-outline ml-auto">Edit
+                        </button>
                     </div>
                 </form>
             </div>
