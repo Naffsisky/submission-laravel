@@ -29,7 +29,7 @@ Route::prefix('public')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [ArticleController::class, 'dashboard'])->name('dashboard');
 
     Route::prefix('admin')->group(function () {
         Route::resource('articles', ArticleController::class);

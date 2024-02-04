@@ -9,11 +9,31 @@ use App\Models\Tag;
 
 class ArticleController extends Controller
 {
-    public function index() {
-        $articles = Article::with(['category', 'tags'])->get();
-        $categories = Category::all();
+    public function index(Request $request) {
+        $categoryId = $request->input('category_id');
+        $searchQuery = $request->input('search');
+        $query = Article::with(['category', 'tags']);
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
 
-        return view('admin.articles.index', compact('articles', 'categories'));
+        if ($searchQuery) {
+            $query->where('title', 'like', '%' . $searchQuery . '%');
+        }
+
+        $articles = $query->paginate(15);
+        $categories = Category::all();
+        $message = $articles->isEmpty() ? 'No articles in this category.' : '';
+
+        return view('admin.articles.index', compact('articles', 'categories', 'message'));
+    }
+
+    public function dashboard() {
+        $articles = Article::all();
+        $categories = Category::all();
+        $tag = Tag::all();
+
+        return view('dashboard', compact('articles', 'categories', 'tag'));
     }
 
     public function articleView($id) {

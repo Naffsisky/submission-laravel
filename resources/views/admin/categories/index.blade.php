@@ -70,4 +70,9 @@
             </div>
         </div>
     @endforelse
+    <div class="container mx-auto">
+        <div class="py-6">
+            {{ $categories->links() }}
+        </div>
+    </div>
 </x-app-layout>

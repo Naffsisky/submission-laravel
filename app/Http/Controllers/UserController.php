@@ -8,11 +8,18 @@ use App\Models\Category;
 
 class UserController extends Controller
 {
-    public function index(){
-        $articles = Article::all();
-        $categories = Category::all();
+    public function index(Request $request){
+        $categoryId = $request->input('category_id');
+        $query = Article::with(['category', 'tags']);
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
 
-        return view('user.blog', compact('articles', 'categories'));
+        $articles = $query->paginate(15);
+        $categories = Category::all();
+        $message = $articles->isEmpty() ? 'No articles in this category.' : '';
+
+        return view('user.blog', compact('articles', 'categories', 'message'));
     }
 
     public function about(){
@@ -20,8 +27,25 @@ class UserController extends Controller
     }
 
     public function view($id) {
-        $article = Article::findOrFail($id);
+        $article = Article::with(['category', 'tags'])->findOrFail($id);
+        $tags = $article->tags->pluck('id');
+        $relatedArticles = Article::with(['category', 'tags'])
+            ->whereHas('tags', function($query) use ($tags) {
+                $query->whereIn('tags.id', $tags);
+            })
+            ->where('id', '!=', $id)
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
 
-        return view('user.view', compact('article'));
+        $previousArticle = Article::where('id', '<', $id)
+            ->orderBy('id', 'desc')
+            ->first();
+    
+        $nextArticle = Article::where('id', '>', $id)
+            ->orderBy('id')
+            ->first();
+
+        return view('user.view', compact('article', 'relatedArticles', 'previousArticle', 'nextArticle'));
     }
 }
