@@ -15,7 +15,7 @@ class CategorySeeder extends Seeder
     {
         DB::table('categories')->insert([
             [
-                'name' => 'Technology 2 💻',
+                'name' => 'Technology 💻',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -55,7 +55,7 @@ class CategorySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Education 2 📚',
+                'name' => 'Education 📚',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
